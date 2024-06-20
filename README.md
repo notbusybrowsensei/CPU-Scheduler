@@ -5,7 +5,7 @@
 A **CPU scheduler** with a proper frontend consisting of multiple algorithms such as :
 
 - **First Come First Serve(FCFS)**
-- **Priority Scheduling**
+- **Priority Scheduling(lower number -> higher priority)**
 - **Shortest Job First(SJF)**
 - **Round Robin(RR)**
 
@@ -20,6 +20,10 @@ The given project displays proper scheduling of the procceses, average waiting t
   **2.** Navigate to the respective directory.
    ```
    cd CPU-Scheduler
+   ```
+   Then navigate to
+   ```
+   cd CPU Scheduling Project
    ```
   **3.** Install the dependencies
    ```
@@ -36,7 +40,11 @@ The given project displays proper scheduling of the procceses, average waiting t
   
   **3.** Select any algorithm and enter the total number of processes and their corresponding entries and press Submit.
   
-  **4.** Tabular data for all the processes, performance metrics and Gantt chart will be outputted.
+## Output 
+
+- Tabular data containing response time,waiting time, finish time.
+- Gantt chart (for checking the processes ID in the gantt chart you need to hover over the line segments)
+- Performance metrics like average waiting time,throughput and CPU utilization.
 
 ## Internal Working
 
