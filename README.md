@@ -33,7 +33,9 @@ The given project displays proper scheduling of the procceses, average waiting t
   python app.py
   ```
   **2.** The website will be accessible on `http://127.0.0.1:5000` 
+  
   **3.** Select any algorithm and enter the total number of processes and their corresponding entries and press Submit.
+  
   **4.** Tabular data for all the processes, performance metrics and Gantt chart will be outputted.
 
 ## Internal Working
