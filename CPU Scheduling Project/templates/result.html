@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CPU Scheduler Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Result</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Process</th>
+                    <th>Arrival Time</th>
+                    <th>Burst Time</th>
+                    <th>Finish Time</th>
+                    <th>Response Time</th>
+                    <th>Waiting Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for process in output %}
+                    <tr>
+                        <td>P{{ process.id }}</td>
+                        <td>{{ process.arrival_time }}</td>
+                        <td>{{ process.serve_time }}</td>
+                        <td>{{ process.finish_time }}</td>
+                        <td>{{ process.response_time }}</td>
+                        <td>{{ process.waiting_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="stat-box">
+            <p><span class="stat-title">Average Waiting Time:</span> {{ average_waiting_time }}</p>
+        </div>
+        <div class="stat-box">
+            <p><span class="stat-title">Throughput:</span> {{ throughput }}</p>
+        </div>
+        <div class="stat-box">
+            <p><span class="stat-title">CPU Utilization:</span> {{ cpu_utilization }}%</p>
+        </div>
+
+        <canvas id="ganttChart" width="800" height="400"></canvas>
+
+        <div class="back-link">
+            <a href="/">Go back</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('ganttChart').getContext('2d');
+            var processes = [
+                {% for process in output %}
+                    {
+                        id: {{ process.id }},
+                        arrival_time: {{ process.arrival_time }},
+                        serve_time: {{ process.serve_time }},
+                        finish_time: {{ process.finish_time }}
+                    },
+                {% endfor %}
+            ];
+
+            processes.sort((a, b) => a.arrival_time - b.arrival_time);
+
+            var currentTime = 0;
+            var chartData = {
+                labels: ['Time'],
+                datasets: []
+            };
+
+            processes.forEach((process, index) => {
+                var start = Math.max(currentTime, process.arrival_time);
+                var end = start + process.serve_time;
+
+                chartData.datasets.push({
+                    label: `P${process.id}`,
+                    data: [{ x: start, y: index }, { x: end, y: index }],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    borderSkipped: false,
+                    stepped: true
+                });
+
+                currentTime = end;
+            });
+
+            var ganttChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        y: {
+                            display: false
+                        }
+                    },
+                    elements: {
+                        line: {
+                            tension: 0 
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItem) {
+                                    return `P${tooltipItem[0].label}`;
+                                },
+                                label: function(tooltipItem) {
+                                    return `ID: ${tooltipItem.dataset.label.replace('P', '')}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
